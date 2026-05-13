@@ -1,14 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced Todo App</title>
     <link rel="stylesheet" href="./src/output.css">
 </head>
+
 <body>
-    
+    <main>
+        <header>
+            <h1>My Tasks</h1>
+            <p>Organize your work and track progress</p>
+        </header>
+        <form id="taskForm">
+            <input type="text" id="taskInput" placeholder="Enter a new task...">
+            <button type="submit">+ Add</button>
+        </form>
+        <section>
+            <input type="text" id="searchInput" placeholder="Search Tasks...">
+            <div>
+                <button type="button" id="allFilterBtn">All</button>
+                <button type="button" id="activeFilterBtn">Active</button>
+                <button type="button" id="completedFilterBtn">Completed</button>
+            </div>
+            <div>
+                <p>Total: <span id="totalCount"></span></p>
+                <p>Active: <span id="activeCount"></span></p>
+                <p>Completed: <span id="completedCount"></span></p>
+            </div>
+        </section>
+        <ul id="taskList">
+            
+        </ul>
+        <p id="emptyMessage">No tasks yet. Add your first task above</p>
+    </main>
 
     <script src="./script.js"></script>
 </body>
+
 </html>
