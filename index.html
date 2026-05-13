@@ -8,33 +8,62 @@
     <link rel="stylesheet" href="./src/output.css">
 </head>
 
-<body>
-    <main>
-        <header>
-            <h1>My Tasks</h1>
-            <p>Organize your work and track progress</p>
+<body class="p-10 bg-gray-100 flex justify-center items-center min-h-screen">
+    <main
+        class=" max-w-xl w-full flex flex-col justify-center items-center  gap-4  bg-white p-8 rounded-lg shadow">
+
+        <header class="grid gap-2">
+            <h1 class="text-3xl font-extrabold text-center">My Tasks</h1>
+            <p class="text-center font-semibold">Organize your work and track progress</p>
         </header>
-        <form id="taskForm">
-            <input type="text" id="taskInput" placeholder="Enter a new task...">
-            <button type="submit">+ Add</button>
-        </form>
-        <section>
-            <input type="text" id="searchInput" placeholder="Search Tasks...">
-            <div>
-                <button type="button" id="allFilterBtn">All</button>
-                <button type="button" id="activeFilterBtn">Active</button>
-                <button type="button" id="completedFilterBtn">Completed</button>
-            </div>
-            <div>
-                <p>Total: <span id="totalCount"></span></p>
-                <p>Active: <span id="activeCount"></span></p>
-                <p>Completed: <span id="completedCount"></span></p>
+        <section class="grid gap-4 w-full">
+            <form id="taskForm" class="flex flex-col sm:flex-row gap-3">
+                <input
+                    class="border border-gray-400 rounded outline-none px-4 py-2 flex-1 focus:border-black focus:ring-2"
+                    type="text" id="taskInput" placeholder="Enter a new task...">
+                <button type="submit"
+                    class="sm:w-auto border rounded-md sm:px-2 py-1.5 font-semibold hover:cursor-pointer bg-gray-100 hover:bg-gray-200">+
+                    Add</button>
+            </form>
+            <div class="grid gap-4">
+                <input class="border border-gray-400 rounded outline-none p-2 focus:border-black focus:ring-2"
+                    type="text" id="searchInput" placeholder="Search Tasks...">
+                <div class="grid sm:grid-cols-3 gap-4">
+                    <button
+                        class="text-lg font-semibold border px-6 py-1 rounded bg-gray-100 hover:bg-gray-200 hover:cursor-pointer"
+                        type="button" id="allFilterBtn">All</button>
+                    <button
+                        class="text-lg font-semibold border px-6 py-1 rounded bg-gray-100 hover:bg-gray-200 hover:cursor-pointer"
+                        type="button" id="activeFilterBtn">Active</button>
+                    <button
+                        class="text-lg font-semibold border px-6 py-1 rounded bg-gray-100 hover:bg-gray-200 hover:cursor-pointer"
+                        type="button" id="completedFilterBtn">Completed</button>
+                </div>
+                <div class="flex flex-col sm:flex-row justify-between">
+                    <p>Total: <span id="totalCount">0</span></p>
+                    <p>Active: <span id="activeCount">0</span></p>
+                    <p>Completed: <span id="completedCount">0</span></p>
+                </div>
             </div>
         </section>
-        <ul id="taskList">
+        <ul class="w-full grid gap-3" id="taskList">
+            <li class="task-card flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                <div class="grid gap-2 min-w-0">
+                    <div class="flex gap-1">
+                        <input class="h-4 w-4 mt-1 cursor-pointer accent-black task-checkbox" type="checkbox">
+                        <p class="font-semibold text-gray-900 task-title">Learn Javascript</p>
+                    </div>
+                    <p class="flex-1 text-sm text-gray-500 task-date">Created: May 13, 2026</p>
+                </div>
+                <div class="grid gap-1">
+                    <button class="edit-btn text-sm px-2 py-1 rounded hover:bg-gray-100 hover:cursor-pointer" type="button">Edit</button>
+                    <button class="delete-btn text-sm px-2 py-1 rounded hover:bg-gray-100 hover:cursor-pointer" type="button">Delete</button>
+                </div>
+            </li>
             
         </ul>
-        <p id="emptyMessage">No tasks yet. Add your first task above</p>
+        <p class="text-center text-gray-500 border border-dashed rounded p-4 w-full" id="emptyMessage">No tasks yet. Add
+            your first task above</p>
     </main>
 
     <script src="./script.js"></script>
