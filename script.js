@@ -10,6 +10,7 @@ let allFilterBtn = document.querySelector("#allFilterBtn")
 let activeFilterBtn = document.querySelector("#activeFilterBtn")
 let completedFilterBtn = document.querySelector("#completedFilterBtn")
 let searchInput = document.querySelector("#searchInput")
+let clearCompletedTask = document.querySelector("#clearCompletedTaskBtn")
 let currentFilter = "all"
 let searchText = ""
 let editingTaskId = null
@@ -34,7 +35,21 @@ let updateStats = () => {
     totalCountState.textContent = all;
     activeCountState.textContent = active;
     completedCountState.textContent = completed;
+    if(completed===0)
+        clearCompletedTask.classList.add("hidden")
+    else
+        clearCompletedTask.classList.remove("hidden")
 
+}
+
+let clearCompletedTasks = () =>{
+    clearCompletedTask.addEventListener("click",()=>{
+        tasks=tasks.filter((task)=>{
+            return !task.completed
+        })
+        saveTasks();
+        renderTasks();
+    })
 }
 
 let deleteTask = () => {
@@ -242,9 +257,8 @@ let addTask = () => {
     })
 }
 
-
-
 loadTasks();
 addTask();
+clearCompletedTasks();
 searchTask();
 renderTasks();

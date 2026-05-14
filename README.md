@@ -13,6 +13,7 @@ A responsive todo application built with HTML, Tailwind CSS, and vanilla JavaScr
 - Show total, active, and completed task counts
 - Show empty states for no tasks and no matching results
 - Save and load tasks with localStorage
+- Clear Completed Tasks
 - Responsive layout using Tailwind CSS
 
 ## Technologies Used
@@ -77,7 +78,6 @@ This project was built to practice:
 
 ## Future Improvements
 
-- Add Clear Completed button
 - Add task priority
 - Add due dates
 - Add sort by newest or oldest
