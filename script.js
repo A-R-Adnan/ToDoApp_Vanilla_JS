@@ -1,5 +1,4 @@
-let tasks = []
-
+let tasks = [];
 let emptyMessage = document.querySelector("#emptyMessage")
 let taskForm = document.querySelector("#taskForm")
 let taskInput = document.querySelector("#taskInput")
@@ -11,12 +10,20 @@ let allFilterBtn = document.querySelector("#allFilterBtn")
 let activeFilterBtn = document.querySelector("#activeFilterBtn")
 let completedFilterBtn = document.querySelector("#completedFilterBtn")
 let searchInput = document.querySelector("#searchInput")
-let filterBtn = "all"
+let currentFilter = "all"
 let searchText = ""
 let editingTaskId = null
 let editedTaskTitle = ""
 
-let updateState = () => {
+let loadTasks = () => {
+    tasks = JSON.parse(localStorage.getItem("advancedTodoTasks")) || []
+}
+
+let saveTasks = () => {
+    localStorage.setItem("advancedTodoTasks", JSON.stringify(tasks));
+}
+
+let updateStats = () => {
     let all = tasks.length;
     let completed = 0;
     tasks.forEach((task) => {
@@ -38,6 +45,7 @@ let deleteTask = () => {
             tasks = tasks.filter((task) => {
                 return task.id !== id;
             })
+            saveTasks();
             renderTasks();
         })
     })
@@ -52,18 +60,19 @@ let toggleComplete = () => {
                 if (task.id === id)
                     task.completed = !task.completed;
             })
+            saveTasks();
             renderTasks()
         })
     })
 }
 
 let updateFilterBtn = (currentFilter) => {
-    if (currentFilter == 'all') {
+    if (currentFilter === "all") {
         allFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-black text-white  hover:cursor-pointer"
         activeFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
         completedFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
     }
-    else if (currentFilter == 'active') {
+    else if (currentFilter === "active") {
         activeFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-black text-white hover:cursor-pointer"
         allFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
         completedFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
@@ -97,7 +106,7 @@ let startEditTask = () => {
 
 let cancelEditTask = () => {
     let cancelEditBtn = document.querySelector(".cancel-edit-btn")
-    if(!cancelEditBtn) return;
+    if (!cancelEditBtn) return;
     cancelEditBtn.addEventListener("click", () => {
         editingTaskId = null;
         renderTasks();
@@ -107,27 +116,28 @@ let cancelEditTask = () => {
 let saveEditTask = () => {
     let saveEditBtn = document.querySelector(".save-edit-btn")
     let editInput = document.querySelector(".edit-input")
-    if(!saveEditBtn || !editInput) return;
+    if (!saveEditBtn || !editInput) return;
     saveEditBtn.addEventListener("click", () => {
         editedTaskTitle = editInput.value.trim();
-        if (editedTaskTitle == "") return;
+        if (editedTaskTitle === "") return;
         let id = Number(editInput.closest("li").id);
         tasks.forEach((task) => {
             if (task.id === id)
                 task.title = editedTaskTitle;
         })
         editingTaskId = null;
+        saveTasks();
         renderTasks();
     })
 }
 
 let renderTasks = () => {
     taskList.innerHTML = "";
-    updateState();
+    updateStats();
     let filteredTasks = [];
-    if (filterBtn === "all")
+    if (currentFilter === "all")
         filteredTasks = tasks;
-    else if (filterBtn === "active") {
+    else if (currentFilter === "active") {
         filteredTasks = tasks.filter((task) => {
             return task.completed === false;
         })
@@ -156,7 +166,7 @@ let renderTasks = () => {
     }
     filteredTasks.forEach((task) => {
         let li = document.createElement("li");
-        if (task.id == editingTaskId) {
+        if (task.id === editingTaskId) {
             li.innerHTML = `<div class="grid gap-3 flex-1 min-w-0">
                              <input class="edit-input border border-gray-400 rounded outline-none px-4 py-2 w-full focus:border-black focus:ring-2" type="text" value="${task.title}">
                              <p class="text-sm text-gray-500 task-date">Created: ${task.createdAt}</p>
@@ -195,41 +205,46 @@ let renderTasks = () => {
 
 
 allFilterBtn.addEventListener("click", () => {
-    filterBtn = "all"
-    updateFilterBtn(filterBtn)
+    currentFilter = "all"
+    updateFilterBtn(currentFilter)
     renderTasks();
 })
 
 activeFilterBtn.addEventListener("click", () => {
-    filterBtn = "active";
-    updateFilterBtn(filterBtn)
+    currentFilter = "active";
+    updateFilterBtn(currentFilter)
     renderTasks();
 })
 
 completedFilterBtn.addEventListener("click", () => {
-    filterBtn = "completed"
-    updateFilterBtn(filterBtn)
-    renderTasks();
-})
-
-taskForm.addEventListener("submit", (evt) => {
-    evt.preventDefault();
-    let title = taskInput.value;
-    title = title.trim();
-    if (title === "") return;
-    const task = {
-        id: Date.now(),
-        title,
-        completed: false,
-        createdAt: new Date().toLocaleDateString()
-    }
-    taskInput.value = "";
-    tasks.push(task);
+    currentFilter = "completed"
+    updateFilterBtn(currentFilter)
     renderTasks();
 })
 
 
+let addTask = () => {
+    taskForm.addEventListener("submit", (evt) => {
+        evt.preventDefault();
+        let title = taskInput.value;
+        title = title.trim();
+        if (title === "") return;
+        const task = {
+            id: Date.now(),
+            title,
+            completed: false,
+            createdAt: new Date().toLocaleDateString()
+        }
+        taskInput.value = "";
+        tasks.push(task);
+        saveTasks();
+        renderTasks();
+    })
+}
 
 
+
+loadTasks();
+addTask();
 searchTask();
 renderTasks();
