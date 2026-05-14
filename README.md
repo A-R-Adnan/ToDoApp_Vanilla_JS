@@ -1,7 +1,7 @@
 # Advanced Todo App
 
 ## Live Demo
-[Click Here to View Live Project]([https://imu-todo-app.netlify.app](https://a-r-adnan.github.io/ToDoApp_Vanilla_JS/))
+[Click Here to View Live Project](https://a-r-adnan.github.io/ToDoApp_Vanilla_JS/)
 
 A responsive todo application built with HTML, Tailwind CSS, and vanilla JavaScript. It lets users add, edit, delete, complete, filter, and search tasks, with all task data saved in localStorage.
 
