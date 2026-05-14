@@ -5,26 +5,28 @@ let taskForm = document.querySelector("#taskForm")
 let taskInput = document.querySelector("#taskInput")
 let taskList = document.querySelector("#taskList")
 let totalCountState = document.querySelector("#totalCount")
-let activeCountState= document.querySelector("#activeCount")
-let completedCountState= document.querySelector("#completedCount")
+let activeCountState = document.querySelector("#activeCount")
+let completedCountState = document.querySelector("#completedCount")
 let allFilterBtn = document.querySelector("#allFilterBtn")
 let activeFilterBtn = document.querySelector("#activeFilterBtn")
 let completedFilterBtn = document.querySelector("#completedFilterBtn")
-let searchInput=document.querySelector("#searchInput")
-let filterBtn="all"
-let searchText=""
+let searchInput = document.querySelector("#searchInput")
+let filterBtn = "all"
+let searchText = ""
+let editingTaskId = null
+let editedTaskTitle = ""
 
-let updateState = ()=>{
+let updateState = () => {
     let all = tasks.length;
     let completed = 0;
-    tasks.forEach((task)=>{
-        if(task.completed)
+    tasks.forEach((task) => {
+        if (task.completed)
             completed++;
     })
-    let active=all-completed;
-    totalCountState.textContent=all;
-    activeCountState.textContent=active;
-    completedCountState.textContent=completed;
+    let active = all - completed;
+    totalCountState.textContent = all;
+    activeCountState.textContent = active;
+    completedCountState.textContent = completed;
 
 }
 
@@ -32,8 +34,8 @@ let deleteTask = () => {
     let deleteBtn = document.querySelectorAll(".delete-btn")
     deleteBtn.forEach((btn) => {
         btn.addEventListener("click", () => {
-            let id=Number(btn.closest("li").id);
-            tasks=tasks.filter((task)=>{
+            let id = Number(btn.closest("li").id);
+            tasks = tasks.filter((task) => {
                 return task.id !== id;
             })
             renderTasks();
@@ -41,95 +43,134 @@ let deleteTask = () => {
     })
 }
 
-let toggleComplete = ()=>{
+let toggleComplete = () => {
     let taskCheckbox = document.querySelectorAll(".task-checkbox");
-    taskCheckbox.forEach((checkbox)=>{
-        checkbox.addEventListener("change",()=>{
-            let id=Number(checkbox.closest("li").id)
-            tasks.forEach((task)=>{
-                if(task.id===id)
-                    task.completed=!task.completed;
+    taskCheckbox.forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+            let id = Number(checkbox.closest("li").id)
+            tasks.forEach((task) => {
+                if (task.id === id)
+                    task.completed = !task.completed;
             })
             renderTasks()
         })
     })
 }
 
-let updateFilterBtn = (currentFilter)=>{
-    if(currentFilter=='all')
-    {
-        allFilterBtn.className="text-lg font-semibold border px-6 py-1 rounded bg-black text-white  hover:cursor-pointer"
-        activeFilterBtn.className="text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
-        completedFilterBtn.className="text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
+let updateFilterBtn = (currentFilter) => {
+    if (currentFilter == 'all') {
+        allFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-black text-white  hover:cursor-pointer"
+        activeFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
+        completedFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
     }
-    else if(currentFilter=='active')
-    {
+    else if (currentFilter == 'active') {
         activeFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-black text-white hover:cursor-pointer"
         allFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
         completedFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
     }
-    else
-    {
-        completedFilterBtn.className="text-lg font-semibold border px-6 py-1 rounded bg-black text-white hover:cursor-pointer"
-        allFilterBtn.className="text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
-        activeFilterBtn.className="text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
+    else {
+        completedFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-black text-white hover:cursor-pointer"
+        allFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
+        activeFilterBtn.className = "text-lg font-semibold border px-6 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer"
     }
 }
 
 
-let searchTask = () =>{
-    searchInput.addEventListener("input",()=>{
-        searchText=searchInput.value.trim();
+let searchTask = () => {
+    searchInput.addEventListener("input", () => {
+        searchText = searchInput.value.trim();
         renderTasks()
     })
-    
+
+}
+
+let startEditTask = () => {
+    let editBtn = document.querySelectorAll(".edit-btn")
+    editBtn.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            editingTaskId = Number(btn.closest("li").id)
+            renderTasks();
+        })
+    })
+
+}
+
+let cancelEditTask = () => {
+    let cancelEditBtn = document.querySelector(".cancel-edit-btn")
+    if(!cancelEditBtn) return;
+    cancelEditBtn.addEventListener("click", () => {
+        editingTaskId = null;
+        renderTasks();
+    })
+}
+
+let saveEditTask = () => {
+    let saveEditBtn = document.querySelector(".save-edit-btn")
+    let editInput = document.querySelector(".edit-input")
+    if(!saveEditBtn || !editInput) return;
+    saveEditBtn.addEventListener("click", () => {
+        editedTaskTitle = editInput.value.trim();
+        if (editedTaskTitle == "") return;
+        let id = Number(editInput.closest("li").id);
+        tasks.forEach((task) => {
+            if (task.id === id)
+                task.title = editedTaskTitle;
+        })
+        editingTaskId = null;
+        renderTasks();
+    })
 }
 
 let renderTasks = () => {
     taskList.innerHTML = "";
     updateState();
     let filteredTasks = [];
-    if(filterBtn==="all")
+    if (filterBtn === "all")
         filteredTasks = tasks;
-    else if(filterBtn==="active")
-    {
-        filteredTasks = tasks.filter((task)=>{
+    else if (filterBtn === "active") {
+        filteredTasks = tasks.filter((task) => {
             return task.completed === false;
         })
     }
-    else
-    {
-        filteredTasks = tasks.filter((task)=>{
+    else {
+        filteredTasks = tasks.filter((task) => {
             return task.completed === true;
         })
     }
-    if(searchText != "")
-    {
-        filteredTasks=filteredTasks.filter((task)=>{
+    if (searchText != "") {
+        filteredTasks = filteredTasks.filter((task) => {
             return task.title.toLowerCase().includes(searchText.toLowerCase());
         })
     }
-    if (tasks.length > 0)
-    {
-        if(filteredTasks.length>0)
-         emptyMessage.classList.add("hidden")
-        else
-        {
+    if (tasks.length > 0) {
+        if (filteredTasks.length > 0)
+            emptyMessage.classList.add("hidden")
+        else {
             emptyMessage.textContent = "No matching tasks found"
             emptyMessage.classList.remove("hidden")
         }
     }
-    else
-    {
+    else {
         emptyMessage.textContent = "No tasks yet. Add your first task above"
         emptyMessage.classList.remove("hidden")
     }
     filteredTasks.forEach((task) => {
         let li = document.createElement("li");
-        li.innerHTML = `<div class="grid gap-2 flex-1 min-w-0">
+        if (task.id == editingTaskId) {
+            li.innerHTML = `<div class="grid gap-3 flex-1 min-w-0">
+                             <input class="edit-input border border-gray-400 rounded outline-none px-4 py-2 w-full focus:border-black focus:ring-2" type="text" value="${task.title}">
+                             <p class="text-sm text-gray-500 task-date">Created: ${task.createdAt}</p>
+                            </div>
+                            <div class="flex sm:grid gap-2">
+                             <button class="save-edit-btn text-sm px-3 py-1 rounded bg-black text-white hover:bg-gray-800 hover:cursor-pointer" type="button"> Save</button>
+                             <button class="cancel-edit-btn text-sm px-3 py-1 rounded bg-gray-100 text-black hover:bg-gray-200 hover:cursor-pointer" type="button"> Cancel</button>
+                            </div>`;
+        }
+        else {
+            li.innerHTML = `<div class="grid gap-2 flex-1 min-w-0">
                     <div class="flex gap-2 min-w-0">
                         <input class="h-4 w-4 mt-1 cursor-pointer accent-black task-checkbox" type="checkbox" ${task.completed ? "checked" : ""}>
-                        <p class="font-semibold ${task.completed ? "line-through text-gray-500":"text-gray-900"} flex-1 min-w-0 break-all  task-title">${task.title}</p>
+                        <p class="font-semibold ${task.completed ? "line-through text-gray-500" : "text-gray-900"} flex-1 min-w-0 break-all  task-title">${task.title}</p>
                     </div>
                     <p class="flex-1 text-sm text-gray-500 task-date">Created: ${task.createdAt}</p>
                 </div>
@@ -139,30 +180,34 @@ let renderTasks = () => {
                     <button class="delete-btn text-sm px-2 py-1 rounded hover:bg-gray-100 hover:cursor-pointer"
                         type="button">Delete</button>
                 </div>`;
-        li.className = `task-card overflow-hidden flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${task.completed ? "bg-gray-50 opacity-70":"bg-white"} border border-gray-200 rounded-lg p-4 shadow-sm`
+        }
+        li.className = `task-card overflow-hidden flex flex-col sm:flex-row gap-3 sm:items-start sm:justify-between ${task.completed ? "bg-gray-50 opacity-70" : "bg-white"} border border-gray-200 rounded-lg p-4 shadow-sm`
         li.id = task.id;
         taskList.appendChild(li);
     })
     deleteTask();
     toggleComplete();
+    startEditTask();
+    cancelEditTask();
+    saveEditTask();
 }
 
 
 
-allFilterBtn.addEventListener("click",()=>{
-    filterBtn="all"
+allFilterBtn.addEventListener("click", () => {
+    filterBtn = "all"
     updateFilterBtn(filterBtn)
     renderTasks();
 })
 
-activeFilterBtn.addEventListener("click",()=>{
-    filterBtn="active";
+activeFilterBtn.addEventListener("click", () => {
+    filterBtn = "active";
     updateFilterBtn(filterBtn)
     renderTasks();
 })
 
-completedFilterBtn.addEventListener("click",()=>{
-    filterBtn="completed"
+completedFilterBtn.addEventListener("click", () => {
+    filterBtn = "completed"
     updateFilterBtn(filterBtn)
     renderTasks();
 })
